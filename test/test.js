@@ -1,38 +1,36 @@
-var assert = require('chai').assert;
+process.env.NODE_ENV = 'test';
+
+var chai = require('chai');
+var chaiHttp = require('chai-http');
 var mongoose = require('mongoose');
-require('dotenv').config();
 
-describe('DBconnect', function() {
-  // var dbuser = process.env.MONGO_USER;
-  // var dbpassword = process.env.MONGO_PW;
-  // var mongoURI = 'mongodb://' + dbuser + ':' + dbpassword +
-  // '@ds015780.mlab.com:15780/heroku_dglx7xwj';
-  var mongoURI = 'mongodb://localhost/test';
-  mongoose.connect(mongoURI);
+var server = require('../server');
+var Savedurl = require('../savedurl');
 
-  it('should not throw an error when trying to connect', function() {
-    assert.doesNotThrow(function() {
-      var db = mongoose.connection;
-      db.on('error', console.error.bind(console, 'connection error:'));
-      db.once('open', function() {
-        console.log('connected!');
-        var kittySchema = mongoose.Schema({
-          name: String
-        });
-        var Kitten = mongoose.model('Kitten', kittySchema);
-        var silence = new Kitten({ name: 'Silence' });
-        silence.save(function (err,silence) {
-          if (err) throw err;
-          console.log(silence);
+var should = chai.should();
+chai.use(chaiHttp);
 
-          Kitten.find(function (err, kittens) {
-            if (err) return console.error(err);
-            console.log(kittens);
-          });
-        });
+describe('Savedurls', function() {
 
+  Savedurl.collection.drop();
 
-      });
+  beforeEach(function (done) {
+    var newSavedurl = new Savedurl({
+      code: 123,
+      url: 'http%3A%2F%2Fwww.google.com%2F'
+    });
+    newSavedurl.save(function(err) {
+      done();
     });
   });
+  afterEach(function (done) {
+    Savedurl.collection.drop();
+    done();
+  });
+
+});
+
+describe('tinyurls', function() {
+  it('should add a tinyurl on /<url> GET');
+  it('should redirect to a saved URL on /<id> GET');
 });

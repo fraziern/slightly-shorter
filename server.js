@@ -1,16 +1,28 @@
+var express = require('express');
 var mongoose = require('mongoose');
 require('dotenv').config();
+var config = require('./_config');
+var app = express();
 
-// var dbuser = process.env.MONGO_USER;
-// var dbpassword = process.env.MONGO_PW;
-// var mongoURI = 'mongodb://' + dbuser + ':' + dbpassword +
-//   '@ds015780.mlab.com:15780/heroku_dglx7xwj';
+mongoose.connect(config.mongoURI[app.settings.env], function (err, res) {
+  if (err) {
+    console.log('Error connecting to the database. ' + err);
+  } else {
+    console.log('Connected to Database: ' + config.mongoURI[app.settings.env]);
+  }
+});
 
-mongoose.connect('mongodb://localhost/test');
+// route '/new' to save the URL as a new document in mongo, with id
 
-var db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', function() {
-  console.log('Connect!');
-  db.close();
+app.get('/', function (req, res) {
+  res.send('Hi!');
+});
+
+app.get('/new/:id', function (req, res) {
+  res.send(req.params.id);
+});
+
+var port = process.env.PORT || 8080;
+app.listen(port,  function () {
+  console.log('Node.js listening on port ' + port + '...');
 });
