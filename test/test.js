@@ -31,6 +31,7 @@ describe('Savedurls', function() {
 });
 
 describe('tinyurls', function() {
-  it('should add a tinyurl on /<url> GET');
+  it('should assign a unique number to each saved tinyurl on /new/<id> GET');
+  it('should add a tinyurl on /new/<id> GET');
   it('should redirect to a saved URL on /<id> GET');
 });
