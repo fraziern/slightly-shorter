@@ -5,7 +5,6 @@ var Schema = mongoose.Schema;
 
 var counterSchema = new Schema({
   id: { type: Number, default: 0 },
-  counter: { type: Number, default: 0 }
-});
+  counter: { type: Number, default: 0 } });
 
 module.exports = mongoose.model('counter', counterSchema);

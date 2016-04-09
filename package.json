@@ -29,6 +29,10 @@
     "express": "^4.12.4",
     "express-session": "^1.11.3",
     "mocha": "^2.4.5",
-    "mongoose": "^4.1.0"
+    "mongoose": "^4.4.12"
+  },
+  "devDependencies": {
+    "eslint-config-airbnb": "^6.2.0",
+    "eslint-plugin-react": "^4.3.0"
   }
 }

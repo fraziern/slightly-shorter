@@ -3,7 +3,6 @@ var Schema = mongoose.Schema;
 
 var savedurlSchema = new Schema({
   code: Number,
-  url: String
-});
+  url: String });
 
 module.exports = mongoose.model('savedurls', savedurlSchema);

@@ -6,8 +6,8 @@ require('dotenv').config();
 var config = require('./_config');
 var app = express();
 
-var Savedurl = require('savedurl');
-var Counter = require('counter');
+var Savedurl = require('./savedurl');
+var Counter = require('./counter');
 
 mongoose.connect(config.mongoURI[app.settings.env], function (err, res) {
   if (err) {
