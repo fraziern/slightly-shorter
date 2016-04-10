@@ -12,4 +12,9 @@ config.mongoURI = {
   test: mongoURITest
 };
 
+config.prefixURL = {
+  development: 'http://slightly-shorter.herokuapp.com/',
+  test: 'http://localhost:8080/'
+};
+
 module.exports = config;
