@@ -32,31 +32,32 @@ Counter.find({ id: 0 }, function(err, counters) {
 });
 
 // route '/new' to save the URL as a new document in mongo, with id
-
 app.get('/new/*', function (req, res) {
   var url = req.params[0];
+  
   Counter.findOneAndUpdate({ id: 0 }, { $inc: { counter: 1 }}, function (err, data) {
     if (err) return console.error(err);
     var savedurl = new Savedurl({
       code: data.counter,
-      url: url
-    });
-    savedurl.save( function (err, savedurl) {
-      if (err) return console.error(err);
-      var returnObj = {
-        original_url: savedurl.url,
-        short_url: prefix + savedurl.code
-      };
-      res.json(returnObj);
-    });
-
+      url: url });
+    savedurl.save(newUrlResponse(err, savedurl, res));
   });
 });
 
+function newUrlResponse (err, savedurl, res) {
+  if (err) return console.error(err);
+  var returnObj = {
+    original_url: savedurl.url,
+    short_url: prefix + savedurl.code };
+  res.json(returnObj);
+}
+
+// Send static page with instructions at root directory
 app.get('/', function (req, res) {
   res.send('Hi!');
 });
 
+// redirect if valid ID given
 app.get('/:id', function (req, res) {
   res.send(req.params.id);
 });
