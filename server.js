@@ -1,4 +1,4 @@
-process.env.NODE_ENV = 'test';
+process.env.NODE_ENV = 'development';
 
 var express = require('express');
 var mongoose = require('mongoose');
@@ -11,6 +11,9 @@ var Counter = require('./counter');
 
 var prefix = config.prefixURL[app.settings.env];
 
+// URL regex
+var re = /(https?:\/\/)([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?/;
+
 mongoose.connect(config.mongoURI[app.settings.env], function (err) {
   if (err) {
     console.log('Error connecting to the database. ' + err);
@@ -20,8 +23,8 @@ mongoose.connect(config.mongoURI[app.settings.env], function (err) {
 });
 
 // Check Counter and populate if nothing there
-Counter.find({ id: 0 }, function(err, counters) {
-  if (counters.length < 1) {
+Counter.findOne({ id: 0 }, function(err, counters) {
+  if (!counters) {
     // empty, we need to seed using a doc with default values
     var counter = new Counter();
     counter.save(function (err, counter) {
@@ -34,7 +37,11 @@ Counter.find({ id: 0 }, function(err, counters) {
 // route '/new' to save the URL as a new document in mongo, with id
 app.get('/new/*', function (req, res) {
   var url = req.params[0];
-  
+  if (!re.test(url)) {
+    res.json({
+      original_url: 'Error: Invalid URL' });
+    return;
+  }
   Counter.findOneAndUpdate({ id: 0 }, { $inc: { counter: 1 }}, function (err, data) {
     if (err) return console.error(err);
     var savedurl = new Savedurl({
@@ -59,7 +66,15 @@ app.get('/', function (req, res) {
 
 // redirect if valid ID given
 app.get('/:id', function (req, res) {
-  res.send(req.params.id);
+  var code = Number(req.params.id);
+  if (!code) res.status(404).send('Not found');
+  Savedurl.findOne({ code: code }, function (err, doc) {
+    if (err) return console.error(err);
+    if (doc == null) res.status(404).send('ID ' + code + ' not found');
+    else {
+      res.redirect(doc.url);
+    }
+  });
 });
 
 var port = process.env.PORT || 8080;
