@@ -14,6 +14,8 @@ var prefix = config.prefixURL[app.settings.env];
 // URL regex
 var re = /(https?:\/\/)([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?/;
 
+app.use(express.static(__dirname + '/public'));
+
 mongoose.connect(config.mongoURI[app.settings.env], function (err) {
   if (err) {
     console.log('Error connecting to the database. ' + err);
